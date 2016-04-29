@@ -8,6 +8,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <service
+            android:name="com.darmsteam.widgetnotifications.WidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,9 +21,10 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".WidgetNotificationsProvider">
+        <receiver android:name="com.darmsteam.widgetnotifications.WidgetNotificationsProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+
             </intent-filter>
 
             <meta-data
@@ -26,7 +32,8 @@
                 android:resource="@xml/appwidget_info" />
         </receiver>
 
-        <activity android:name=".ConfigureActivity">
+        <activity
+            android:name="com.darmsteam.widgetnotifications.ConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>

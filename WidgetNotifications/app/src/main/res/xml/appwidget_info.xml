@@ -7,7 +7,3 @@
                     android:resizeMode="horizontal|vertical" >
 </appwidget-provider>
 
-
-<!--
-                    android:configure="com.darmsteam.widgetnotifications.ConfigureActivity"
-                    -->
