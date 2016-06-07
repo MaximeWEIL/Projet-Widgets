@@ -12,7 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by Younes on 28/04/2016 at 09:37.
+ * adapter utilisé pour changé
  */
 
 public class ListAppsAdapter extends ArrayAdapter<AppDescription>
@@ -42,7 +42,6 @@ public class ListAppsAdapter extends ArrayAdapter<AppDescription>
             ImageView app_icon = (ImageView)v.findViewById(R.id.app_icon);
             TextView app_name = (TextView)v.findViewById(R.id.app_name);
             Switch app_switch = (Switch)v.findViewById(R.id.app_switch);
-
             app_icon.setImageDrawable(description.getIcon());
             app_name.setText(description.getName());
             app_switch.setChecked(description.isChecked());

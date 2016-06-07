@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.widget.RemoteViewsService;
 
 /**
- * Created by Younes on 28/04/2016 at 22:32.
+ * Cette classe est le service nécessaire pour mettre à jour la liste des apps dans le widget
  */
 public class WidgetService extends RemoteViewsService
 {

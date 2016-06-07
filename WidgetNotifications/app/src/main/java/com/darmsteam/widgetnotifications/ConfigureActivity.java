@@ -14,16 +14,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.RemoteViews;
-import android.widget.Switch;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// Actiité utilisée pour la configuration du widget lors de son initialisation
 public class ConfigureActivity extends AppCompatActivity
 {
-    SharedPreferences.Editor editor;
+    private static final String TAG = "ConfigureActivity";
+    ArrayList<AppDescription> apps;
+    boolean accesNotifs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -33,43 +35,44 @@ public class ConfigureActivity extends AppCompatActivity
         setTitle("Sélection des apps");
         setResult(RESULT_CANCELED);
 
-        ListView list_apps = (ListView)findViewById(R.id.list_apps);
+        ListView list_apps = (ListView) findViewById(R.id.list_apps);
+
+        // Récupération de la liste des apps de l'appareil
         PackageManager manager = getPackageManager();
         List<PackageInfo> packageInfos = manager.getInstalledPackages(0);
-        final ArrayList<AppDescription> apps = new ArrayList<>();
+        apps = new ArrayList<>();
         AppDescription app;
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        editor = preferences.edit();
 
+        /* pour chaque appli, on affiche son icone, son nom et un switch permettant de savoir
+           si l'appli est sélectionnée ou non */
         for(PackageInfo p : packageInfos)
         {
-            if(manager.getLaunchIntentForPackage(p.packageName) != null)
-            {
-                app = new AppDescription();
-                app.setName(manager.getApplicationLabel(p.applicationInfo).toString());
-                app.setIcon(p.applicationInfo.loadIcon(manager));
-                app.setPackageName(p.packageName);
-                app.setChecked(preferences.getBoolean(p.packageName, false));
-                apps.add(app);
-            }
+            app = new AppDescription();
+            app.setName(manager.getApplicationLabel(p.applicationInfo).toString());
+            app.setIcon(p.applicationInfo.loadIcon(manager));
+            app.setPackageName(p.packageName);
+            app.setChecked((preferences.getInt(p.packageName, -1) > -1));
+            apps.add(app);
         }
 
+        // tri des apps
         Collections.sort(apps);
-        list_apps.setAdapter(new ListAppsAdapter(this, android.R.layout.simple_list_item_1, apps));
+        final ListAppsAdapter adapter = new ListAppsAdapter(this, android.R.layout.simple_list_item_1, apps);
+        list_apps.setAdapter(adapter);
 
         list_apps.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                Switch app_switch = (Switch) view.findViewById(R.id.app_switch);
-                boolean checked = !app_switch.isChecked();
-                app_switch.setChecked(checked);
+                boolean checked = !apps.get(position).isChecked();
                 apps.get(position).setChecked(checked);
-                editor.putBoolean(apps.get(position).getPackageName(), checked);
+                adapter.notifyDataSetChanged();
             }
         });
+
     }
 
     @Override
@@ -87,22 +90,35 @@ public class ConfigureActivity extends AppCompatActivity
         switch(item.getItemId())
         {
             case R.id.action_valider:
+                // on enregistre la sélection des applis sur le clic du bouton valider
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor editor = preferences.edit();
+                for(AppDescription app : apps)
+                {
+                    if(app.isChecked())
+                        editor.putInt(app.getPackageName(), 0);
+                    else
+                        editor.remove(app.getPackageName());
+                }
                 editor.apply();
 
+
+                //on met à jour les instances du widget qui sont déjà sur l'écran (s'il y en a)
                 Intent intent = getIntent();
                 Bundle extras = intent.getExtras();
-                if (extras != null) {
+                if(extras != null)
+                {
                     mAppWidgetId = extras.getInt(
                             AppWidgetManager.EXTRA_APPWIDGET_ID,
                             AppWidgetManager.INVALID_APPWIDGET_ID);
                 }
 
-                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-                RemoteViews views = new RemoteViews(getPackageName(), R.layout.appwidget_layout);
-                appWidgetManager.updateAppWidget(mAppWidgetId, views);
-                Intent resultValue = new Intent();
-                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-                setResult(RESULT_OK, resultValue);
+
+                intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE, null, this, WidgetNotificationsProvider.class);
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+                setResult(RESULT_OK, intent);
+                    sendBroadcast(intent);
+
                 finish();
                 break;
 

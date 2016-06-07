@@ -1,9 +1,9 @@
 package com.darmsteam.widgetnotifications;
 
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 
 /**
- * Created by Younes on 28/04/2016 at 09:38.
  */
 public class AppDescription implements Comparable<AppDescription>
 {
@@ -63,10 +63,16 @@ public class AppDescription implements Comparable<AppDescription>
         return checked;
     }
 
+    // Methode permettant de trier les apps dans l'ordre "coché/décoché"
     @Override
-    public int compareTo(AppDescription another)
+    public int compareTo(@NonNull AppDescription another)
     {
-        return name.compareTo(another.name);
+        if(this.isChecked() && !another.isChecked())
+            return -1;
+        else if(!this.isChecked() && another.isChecked())
+            return 1;
+        else
+            return name.toLowerCase().compareTo(another.name.toLowerCase());
     }
 
     public String getPackageName()

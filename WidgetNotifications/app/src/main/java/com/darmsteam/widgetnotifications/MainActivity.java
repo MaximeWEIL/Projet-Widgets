@@ -1,9 +1,10 @@
 package com.darmsteam.widgetnotifications;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+
+// classe de test, inutile pour le bon fonctionnement du widget
 public class MainActivity extends AppCompatActivity
 {
 
@@ -12,8 +13,5 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Intent intent = new Intent(this, ConfigureActivity.class);
-        startActivity(intent);
     }
 }
