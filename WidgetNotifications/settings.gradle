@@ -1,1 +1,2 @@
-include ':app'
+include ':app', ':dragsort-lib'
+project(':dragsort-lib').projectDir = new File('app/dragsort-lib')

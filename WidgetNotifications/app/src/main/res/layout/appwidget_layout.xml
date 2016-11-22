@@ -15,11 +15,22 @@
 
         <ImageView
             android:clickable="true"
+            android:layout_toLeftOf="@+id/sort"
+            android:layout_toStartOf="@+id/sort"
+            android:layout_centerVertical="true"
+            android:id="@+id/edit"
+            android:src="@drawable/ic_edit"
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:clickable="true"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:id="@+id/settings"
-            android:src="@drawable/ic_action_settings"
+            android:id="@+id/sort"
+            android:src="@drawable/ic_sort"
             android:layout_gravity="end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

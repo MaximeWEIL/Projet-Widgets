@@ -12,7 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * adapter utilisé pour changé
+ * adapter utilisé pour changer
  */
 
 public class ListAppsAdapter extends ArrayAdapter<AppDescription>

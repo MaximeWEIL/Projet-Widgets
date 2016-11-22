@@ -11,13 +11,15 @@ public class AppDescription implements Comparable<AppDescription>
     private String packageName;
     private Drawable icon;
     private boolean checked;
+    private int ordre;
 
     public AppDescription(String name, String packageName, Drawable icon, boolean checked)
     {
-        this.name = name;
+        this.name = name.replace("Appeler", "Téléphone");
         this.packageName = packageName;
         this.icon = icon;
         this.checked = checked;
+        this.ordre = -1;
     }
 
     public AppDescription()
@@ -26,11 +28,22 @@ public class AppDescription implements Comparable<AppDescription>
         this.packageName = null;
         this.icon = null;
         this.checked = false;
+        this.ordre = -1;
+    }
+
+    public int getOrdre()
+    {
+        return ordre;
+    }
+
+    public void setOrdre(int ordre)
+    {
+        this.ordre = ordre;
     }
 
     public void setName(String name)
     {
-        this.name = name;
+        this.name = name.replace("Appeler", "Téléphone");
     }
 
     public void setPackageName(String packageName)
@@ -50,7 +63,7 @@ public class AppDescription implements Comparable<AppDescription>
 
     public String getName()
     {
-        return name;
+        return name.replace("Appeler", "Téléphone");
     }
 
     public Drawable getIcon()
@@ -67,9 +80,9 @@ public class AppDescription implements Comparable<AppDescription>
     @Override
     public int compareTo(@NonNull AppDescription another)
     {
-        if(this.isChecked() && !another.isChecked())
+        if((this.isChecked() && !another.isChecked()) || (this.ordre < another.ordre))
             return -1;
-        else if(!this.isChecked() && another.isChecked())
+        else if((!this.isChecked() && another.isChecked()) || (this.ordre > another.ordre))
             return 1;
         else
             return name.toLowerCase().compareTo(another.name.toLowerCase());

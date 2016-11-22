@@ -32,28 +32,35 @@ public class ListWidgetProvider implements RemoteViewsService.RemoteViewsFactory
 
     private void populateListItem() {
 
+        Log.e("ICI", "COUCOU");
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         Map<String, ?> keys = preferences.getAll();
         PackageManager manager = context.getPackageManager();
         PackageInfo packageInfo;
         AppDescription app;
         int nb;
+        int ordre;
+        apps.clear();
 
         /* parcours de la liste des clés dans les SharedPreferences afin de récupérer les
            applis et le nombre de notifications associé. */
         for(Map.Entry<String, ?> entry : keys.entrySet())
         {
+
+            Log.e(entry.getKey(), entry.getValue().toString());
             try
             {
-                if(entry.getValue() instanceof Integer && (Integer)entry.getValue() > -1)
+                if(!entry.getKey().startsWith("sort") && entry.getValue() instanceof Integer && (Integer)entry.getValue() > -1)
                 {
                     packageInfo = manager.getPackageInfo(entry.getKey(), 0);
                     nb = preferences.getInt(packageInfo.packageName, -1);
+                    ordre = preferences.getInt("sort"+packageInfo.packageName, 0);
                     app = new AppDescription();
                     app.setPackageName(packageInfo.packageName);
                     app.setName(manager.getApplicationLabel(packageInfo.applicationInfo).toString());
                     app.setIcon(packageInfo.applicationInfo.loadIcon(manager));
                     app.setChecked(nb > -1);
+                    app.setOrdre(ordre);
                     apps.add(app);
                 }
             }
@@ -74,7 +81,7 @@ public class ListWidgetProvider implements RemoteViewsService.RemoteViewsFactory
     @Override
     public void onDataSetChanged()
     {
-
+        populateListItem();
     }
 
     @Override
@@ -108,6 +115,7 @@ public class ListWidgetProvider implements RemoteViewsService.RemoteViewsFactory
         final RemoteViews remoteView = new RemoteViews(
                 context.getPackageName(), R.layout.list_row);
 
+        Log.e("hello", "im here");
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         AppDescription app = apps.get(position);
         int notif = preferences.getInt(app.getPackageName(), 0);

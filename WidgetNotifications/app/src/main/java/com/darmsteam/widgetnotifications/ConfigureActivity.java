@@ -3,6 +3,7 @@ package com.darmsteam.widgetnotifications;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -49,12 +50,18 @@ public class ConfigureActivity extends AppCompatActivity
            si l'appli est sélectionnée ou non */
         for(PackageInfo p : packageInfos)
         {
-            app = new AppDescription();
-            app.setName(manager.getApplicationLabel(p.applicationInfo).toString());
-            app.setIcon(p.applicationInfo.loadIcon(manager));
-            app.setPackageName(p.packageName);
-            app.setChecked((preferences.getInt(p.packageName, -1) > -1));
-            apps.add(app);
+            if((p.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0 || p.packageName.equals("com.android.dialer")
+                    || p.packageName.equals("com.google.android.gm")
+                    || p.packageName.equals("com.google.android.calendar")
+                    || p.packageName.equals("com.android.mms"))
+            {
+                app = new AppDescription();
+                app.setName(manager.getApplicationLabel(p.applicationInfo).toString());
+                app.setIcon(p.applicationInfo.loadIcon(manager));
+                app.setPackageName(p.packageName);
+                app.setChecked((preferences.getInt(p.packageName, -1) > -1));
+                apps.add(app);
+            }
         }
 
         // tri des apps
@@ -96,9 +103,12 @@ public class ConfigureActivity extends AppCompatActivity
                 for(AppDescription app : apps)
                 {
                     if(app.isChecked())
-                        editor.putInt(app.getPackageName(), 0);
+                        editor.putInt(app.getPackageName(), preferences.getInt(app.getPackageName(), 0));
                     else
+                    {
                         editor.remove(app.getPackageName());
+                        editor.remove("sort" + app.getPackageName());
+                    }
                 }
                 editor.apply();
 
@@ -119,6 +129,9 @@ public class ConfigureActivity extends AppCompatActivity
                 setResult(RESULT_OK, intent);
                     sendBroadcast(intent);
 
+
+                intent = new Intent(this, SortAppsActivity.class);
+                startActivity(intent);
                 finish();
                 break;
 
@@ -127,4 +140,6 @@ public class ConfigureActivity extends AppCompatActivity
         }
         return true;
     }
+
+
 }

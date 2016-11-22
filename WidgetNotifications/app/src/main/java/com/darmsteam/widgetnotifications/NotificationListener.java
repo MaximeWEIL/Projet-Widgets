@@ -16,6 +16,7 @@ public class NotificationListener extends NotificationListenerService
 
     String dialer = "com.android.dialer";
     String telecom = "com.android.server.telecom";
+    String free = "fr.freemobile.android.vvm";
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
@@ -24,7 +25,8 @@ public class NotificationListener extends NotificationListenerService
         Log.i(TAG,"ID :" + sbn.getId() + "\t" + sbn.getNotification().tickerText + "\t" + sbn.getPackageName());
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(preferences.contains(sbn.getPackageName()) && sbn.getNotification().tickerText != null)
+        if((preferences.contains(sbn.getPackageName()) && sbn.getNotification().tickerText != null) ||
+                (preferences.contains(sbn.getPackageName()) && sbn.getPackageName().equals("com.microsoft.office.outlook") && sbn.getId() == 1) )
             setNbNotif(sbn.getPackageName(), 1);
 
         else if(preferences.contains(dialer) && sbn.getPackageName().equals(telecom))
@@ -38,7 +40,8 @@ public class NotificationListener extends NotificationListenerService
         Log.i(TAG,"ID :" + sbn.getId() + "\t" + sbn.getNotification().tickerText +"\t" + sbn.getPackageName());
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(preferences.contains(sbn.getPackageName()) && sbn.getNotification().tickerText != null)
+        if((preferences.contains(sbn.getPackageName()) && sbn.getNotification().tickerText != null) ||
+                (preferences.contains(sbn.getPackageName()) && sbn.getPackageName().equals("com.microsoft.office.outlook") && sbn.getId() == 1) )
             setNbNotif(sbn.getPackageName(), -1);
 
         else if(preferences.contains(dialer) && sbn.getPackageName().equals(telecom))
@@ -48,8 +51,10 @@ public class NotificationListener extends NotificationListenerService
     private void setNbNotif(String packageName, int nb)
     {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int notif = nb < 0 ? 0 : preferences.getInt(packageName, 0)+nb;
+        notif = notif > 1 && packageName.equals(free) ? 1 : notif;
         if(preferences.contains(packageName))
-            preferences.edit().putInt(packageName, preferences.getInt(packageName, 0)+nb).apply();
+            preferences.edit().putInt(packageName, notif).apply();
 
         int widgetIDs[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), WidgetNotificationsProvider.class));
         for (int id : widgetIDs)

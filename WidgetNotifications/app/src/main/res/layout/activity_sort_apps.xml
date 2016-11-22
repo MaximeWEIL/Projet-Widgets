@@ -1,0 +1,31 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dslv="http://schemas.android.com/apk/com.yzobairi.straslines"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.mobeta.android.dslv.DragSortListView
+        xmlns:dslv="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/list_sort_apps"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="multipleChoice"
+        dslv:float_background_color="?colorPrimary"
+        dslv:drag_enabled="true"
+        dslv:drag_scroll_start="0.33"
+        dslv:drag_start_mode="onDown"
+        dslv:float_alpha="0.5"
+        dslv:click_remove_id="@id/click_remove"
+        dslv:drag_handle_id="@id/drag_handle"
+        android:dividerHeight="1dp"
+        android:divider="#ffc5c5c5"
+        dslv:slide_shuffle_speed="0.3" />
+
+    <View
+        android:id="@+id/divider_dslv_cts"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#ffc5c5c5" />
+
+</LinearLayout>
